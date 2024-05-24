@@ -10,7 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from pathlib import Path
+from environs import Env
+import dj_database_url
+from decouple import config
 import os
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,10 +31,13 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'static')
 SECRET_KEY = '@k0#p3kidu)yaaa3u1hplxz)f@^6xiy384*(+n@@s5x#1bx@m5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -43,7 +52,7 @@ INSTALLED_APPS = [
     'teacher',
     'student',
     'widget_tweaks',
-
+    'whitenoise.runserver_nostatic' #new
 ]
 
 MIDDLEWARE = [
@@ -54,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware' #new
 ]
 CSRF_COOKIE_SECURE=False
 ROOT_URLCONF = 'onlinequiz.urls'
@@ -81,12 +91,12 @@ WSGI_APPLICATION = 'onlinequiz.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default='postgres://mydb_srzx_user:RGMJRpQWws2WpiPBNLdosyXndCU2mi5h@dpg-cp832t7jbltc738li1t0-a/mydb_srzx',
+        conn_max_age=600
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -137,11 +147,11 @@ EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'kuhelisaha8250@gmail.com' # this email will be used to send emails
-EMAIL_HOST_PASSWORD = 'saha@7047' # host email password required
+EMAIL_HOST_USER = 'sumansen268@gmail.com' # this email will be used to send emails
+EMAIL_HOST_PASSWORD = 'Suman@1409' # host email password required
 # now sign in with your host gmail account in your browser
 # open following link and turn it ON
 # https://myaccount.google.com/lesssecureapps
 # otherwise you will get SMTPAuthenticationError at /contactus
 # this process is required because google blocks apps authentication by default
-EMAIL_RECEIVING_USER = ['sudiptasaha0327@gmail.com'] # email on which you will receive messages sent from website
+EMAIL_RECEIVING_USER = ['sumansen268@gmail.com'] # email on which you will receive messages sent from website
